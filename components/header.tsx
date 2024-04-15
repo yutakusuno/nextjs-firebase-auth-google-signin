@@ -2,16 +2,21 @@
 
 import { useUserSession } from '@/hooks/use-user-session';
 import { signInWithGoogle, signOutWithGoogle } from '@/libs/firebase/auth';
+import { createSession, removeSession } from '@/actions/auth-actions';
 
 export function Header({ session }: { session: string | null }) {
   const userSessionId = useUserSession(session);
 
   const handleSignIn = async () => {
-    await signInWithGoogle();
+    const userUid = await signInWithGoogle();
+    if (userUid) {
+      await createSession(userUid);
+    }
   };
 
   const handleSignOut = async () => {
     await signOutWithGoogle();
+    await removeSession();
   };
 
   if (!userSessionId) {

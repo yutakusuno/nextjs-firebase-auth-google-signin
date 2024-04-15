@@ -15,7 +15,13 @@ export async function signInWithGoogle() {
   const provider = new GoogleAuthProvider();
 
   try {
-    await signInWithPopup(firebaseAuth, provider);
+    const result = await signInWithPopup(firebaseAuth, provider);
+
+    if (!result || !result.user) {
+      throw new Error('Google sign in failed');
+    }
+
+    return result.user.uid;
   } catch (error) {
     console.error('Error signing in with Google', error);
   }
